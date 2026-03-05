@@ -80,6 +80,7 @@ def get_posts():
             "id": msg.id,
             "text": msg.text,
             "username": user.username
+            "date": msg.timestamp.isoformat("%H:%M")
         })
     return jsonify(output), 200
 

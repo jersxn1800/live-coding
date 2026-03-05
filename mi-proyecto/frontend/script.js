@@ -15,6 +15,16 @@ document.getElementById('form-register').addEventListener('submit', async functi
     const user = this.querySelector('input[type="text"]').value;
     const pass = document.getElementById('regPassword').value;
     const confirmPass = document.getElementById('confirmRegPassword').value;
+    const email = this.querySelector('input[type="email"]').value.toLowerCase();
+    
+    // Validación de dominios permitidos
+    const dominiosValidos = ['gmail.com', 'hotmail.com', 'outlook.com', 'yahoo.com'];
+    const esValido = dominiosValidos.some(dominio => email.endsWith(dominio));
+
+    if (!esValido) {
+        alert("❌ Solo se permiten correos de Gmail, Hotmail, Outlook o Yahoo.");
+        return;
+    }
 
     const strongPasswordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     if (!strongPasswordRegex.test(pass)) {
@@ -88,7 +98,7 @@ async function cargarMensajes() {
         container.innerHTML = ""; 
 
         mensajes.forEach(m => {
-            agregarMensajeAlFeed(m.username, m.text);
+            agregarMensajeAlFeed(m.username, m.text, m.id, m.timestamp);
         });
     } catch (err) {
         console.error("Error al cargar mensajes:", err);
@@ -123,16 +133,43 @@ async function publicar() {
 // ==========================================
 // 4. UTILIDADES DE UI
 // ==========================================
+function tiempoRelativo(fechaISO) {
+    const fechaPost = new Date(fechaISO);
+    const ahora = new Date();
+    const diferenciaSegundos = Math.floor((ahora - fechaPost) / 1000);
 
-function agregarMensajeAlFeed(username, contenido) {
+    if (diferenciaSegundos < 60) return "ahora mismo";
+    
+    const minutos = Math.floor(diferenciaSegundos / 60);
+    if (minutos < 60) return `hace ${minutos} min`;
+    
+    const horas = Math.floor(minutos / 60);
+    if (horas < 24) return `hace ${horas} h`;
+    
+    const dias = Math.floor(horas / 24);
+    return `hace ${dias} días`;
+}
+
+function agregarMensajeAlFeed(username, contenido, postId, fecha) {
     const container = document.getElementById('mensajes-container');
     const nuevoMensaje = document.createElement('div');
     nuevoMensaje.className = "card border-0 shadow-sm mb-3 msg-card animate-fade-in";
+    
+    // Calculamos el tiempo relativo (si no hay timestamp, es porque se acaba de publicar)
+    const tiempoTexto = timestampISO ? tiempoRelativo(timestampISO) : "ahora mismo";
+
+    const btnEliminar = (loggedInUser && loggedInUser.role === 'admin') 
+        ? `<button class="btn btn-sm btn-outline-danger border-0" onclick="eliminarPost(${postId})">🗑️</button>` 
+        : '';
+
     nuevoMensaje.innerHTML = `
         <div class="card-body">
             <div class="d-flex justify-content-between align-items-center mb-2">
                 <span class="fw-bold text-primary">@${username}</span>
-                <small class="text-muted">Justo ahora</small>
+                <div class="d-flex align-items-center gap-2">
+                    <small class="text-muted">${tiempoTexto}</small>
+                    ${btnEliminar}
+                </div>
             </div>
             <p class="card-text"></p>
         </div>
