@@ -1,0 +1,65 @@
+body {
+    background-color: #f0f2f5;
+    font-family: 'Inter', sans-serif;
+}
+
+.fw-extrabold {
+    font-weight: 800;
+}
+
+.card {
+    border-radius: 12px;
+}
+
+.msg-card:hover {
+    transform: translateY(-2px);
+    transition: all 0.2s ease;
+}
+
+.navbar-brand {
+    letter-spacing: -1px;
+}
+
+/* Colores personalizados (opcional) */
+.btn-primary {
+    background-color: #0d6efd;
+    border: none;
+}
+
+textarea:focus {
+    box-shadow: none !important;
+}
+
+.badge {
+    cursor: pointer;
+}
+
+/*Animaciones de la publicacion */
+
+@keyframes fadeInSlide {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in {
+    animation: fadeInSlide 0.4s ease-out;
+}
+
+/* Estilo para cuando el campo está vacío */
+.is-invalid {
+    border: 2px solid #dc3545 !important;
+}
+
+/* Bloquear el redimensionamiento manual con el mouse */
+#msgContent {
+    resize: none; 
+    overflow-y: hidden; /* Oculta el scrollbar mientras crece */
+    min-height: 50px;   /* Altura inicial */
+    transition: height 0.1s ease; /* Suaviza el salto de crecimiento */
+}
